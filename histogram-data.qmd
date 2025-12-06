@@ -1,0 +1,31 @@
+```         
+---
+title: "Histograms for Multiple CSVs in Folder"
+format: html
+---
+
+```{r}
+library(ggplot2)
+library(readr)
+
+# List all CSV files in 'histogram-data' folder
+csv_files <- list.files(path = "histogram-data", pattern = "\\.csv$", full.names = TRUE)
+
+for (file in csv_files) {
+  data <- read_csv(file, col_names = FALSE, show_col_types = FALSE)
+  
+  # Force binwidth = 1 for integer values
+  p <- ggplot(data, aes(x = X1)) +
+    geom_histogram(binwidth = 1, fill = "steelblue", color = "black", boundary = 0.5) +
+    scale_x_continuous(breaks = seq(min(data$X1), max(data$X1), by = 1)) +
+    labs(x = "Value", y = "Frequency", title = paste("Histogram:", basename(file))) +
+    theme_minimal() +
+    theme(
+      axis.text = element_text(size = 12),
+      axis.title = element_text(size = 14),
+      plot.title = element_text(size = 16, face = "bold")
+    )
+  
+  print(p)
+}
+```
